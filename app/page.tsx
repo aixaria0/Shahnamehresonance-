@@ -92,11 +92,13 @@ export default function ResonanceShahnameh() {
     if (!('speechSynthesis' in window) || !isTTSActive) return;
     const synth = window.speechSynthesis;
     synth.cancel();
-    // Store utterances globally to prevent garbage collection bug in Safari/Chrome
+    stopAudioAnalysis();
+    
+    // Store utterances globally to prevent garbage collection bug
     const currentUtterances: SpeechSynthesisUtterance[] = [];
     utterancesRef.current = currentUtterances;
 
-    let cleanText = text;
+    let cleanText = text.replace(/[*#]/g, '');
     Object.keys(pronunciationFix).forEach(word => {
       const regex = new RegExp(word, 'gi');
       cleanText = cleanText.replace(regex, pronunciationFix[word]);
@@ -105,29 +107,49 @@ export default function ResonanceShahnameh() {
     const sentences = cleanText.split(/[.!؟\n]/).filter(s => s.trim().length > 3);
 
     const speakSentence = (index: number) => {
-      if (index >= sentences.length) return;
-      if (utterancesRef.current !== currentUtterances) return; // Cancel if interrupted
-      
+      if (index >= sentences.length) {
+        setIsPlayingVoice(false);
+        setAudioVolume(0);
+        return;
+      }
+      if (utterancesRef.current !== currentUtterances) return; 
+
       const utterance = new SpeechSynthesisUtterance(sentences[index].trim());
       utterance.lang = 'fa-IR';
       utterance.rate = configOverrides?.rate || voiceConfig.rate;
       utterance.pitch = configOverrides?.pitch || voiceConfig.pitch;
       utterance.volume = configOverrides?.volume || voiceConfig.volume;
 
-      utterance.onerror = (e) => {
-        console.error('Speech synthesis error', e);
+      utterance.onstart = () => {
+        setIsPlayingVoice(true);
+        const simulateVisuals = () => {
+          if (!synth.speaking) {
+            setAudioVolume(0);
+            return;
+          }
+          setAudioVolume(Math.random() * 60 + 40); 
+          animationFrameRef.current = requestAnimationFrame(simulateVisuals);
+        };
+        simulateVisuals();
       };
 
       utterance.onend = () => {
-        // Natural pause between sentences
-        setTimeout(() => speakSentence(index + 1), 280);
+        setTimeout(() => speakSentence(index + 1), 300);
+      };
+
+      utterance.onerror = (e) => {
+        console.error('Speech synthesis error', e);
+        setIsPlayingVoice(false);
+        setAudioVolume(0);
       };
 
       utterancesRef.current.push(utterance);
       synth.speak(utterance);
     };
 
-    speakSentence(0);
+    if (sentences.length > 0) {
+      speakSentence(0);
+    }
   };
 
   const recognitionRef = useRef<any>(null);
@@ -342,24 +364,22 @@ export default function ResonanceShahnameh() {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       
       let analyser: AnalyserNode;
+      const audioCtx = ctx || audioContextRef.current || new (window.AudioContext || (window as any).webkitAudioContext)();
+      
       if (streamOrSource instanceof MediaStream) {
-        const audioCtx = ctx || new (window.AudioContext || (window as any).webkitAudioContext)();
         audioContextRefForMic.current = audioCtx;
         const source = audioCtx.createMediaStreamSource(streamOrSource);
         analyser = audioCtx.createAnalyser();
         source.connect(analyser);
       } else {
-        // It's a source node
-        analyser = (streamOrSource.context as AudioContext).createAnalyser();
+        analyser = audioCtx.createAnalyser();
         streamOrSource.connect(analyser);
-        analyser.connect(streamOrSource.context.destination);
+        analyser.connect(audioCtx.destination);
       }
       
-      analyser.fftSize = 128;
+      analyser.fftSize = 256;
       analyzerRef.current = analyser;
-
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
       const updateVolume = () => {
         if (!analyzerRef.current) return;
@@ -367,10 +387,10 @@ export default function ResonanceShahnameh() {
         setAudioData(new Uint8Array(dataArray));
         
         let sum = 0;
-        for (let i = 0; i < bufferLength; i++) {
+        for (let i = 0; i < dataArray.length; i++) {
           sum += dataArray[i];
         }
-        const average = sum / bufferLength;
+        const average = sum / dataArray.length;
         setAudioVolume(average);
         animationFrameRef.current = requestAnimationFrame(updateVolume);
       };
@@ -444,8 +464,14 @@ export default function ResonanceShahnameh() {
 
   const handleSpeak = async (text: string, id: string = 'global') => {
     if (isPlayingVoice) {
-      if (audioContextRef.current) audioContextRef.current.close().catch(() => {});
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+      }
       setIsPlayingVoice(false);
+      stopAudioAnalysis();
       return;
     }
     
@@ -1537,30 +1563,26 @@ export default function ResonanceShahnameh() {
 
   const handleTakeFal = async () => {
     setIsGeneratingFal(true);
-    setFalData(null); // Clear previous data
+    setFalData(null); 
     try {
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
-      if (audioContextRef.current) {
-        audioContextRef.current.close().catch(() => {});
-      }
+      stopAudioAnalysis();
       
       const result = await generateFal();
       setFalData(result);
       
-      // Automatic speech with a slightly longer delay to ensure UI transition completes
       setTimeout(() => {
         handleSpeak(`${result.verses.join('. ')}. تفسیرِ حکیمانه: ${result.tafsir}`, 'fal');
-      }, 1000);
+      }, 800);
       
     } catch (error: any) {
       console.error(error);
-      if (error.message === "QUOTA_EXCEEDED") {
-         showNotification('سهمیه هوش مصنوعی به پایان رسیده است. لطفا بعدا تلاش کنید.', 'error');
-      } else {
-         showNotification('خطا در گرفتن فال. لطفاً دوباره تلاش کنید.', 'error');
-      }
+      const msg = error.message === "QUOTA_EXCEEDED" 
+        ? 'سهمیه هوش مصنوعی به پایان رسیده است. لطفا بعدا تلاش کنید.' 
+        : 'فال در غبارِ زمان گم شد. دوباره نیت کن.';
+      showNotification(msg, 'error');
     } finally {
       setIsGeneratingFal(false);
     }

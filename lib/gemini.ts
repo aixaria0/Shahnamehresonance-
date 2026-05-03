@@ -291,10 +291,13 @@ export async function generateFal() {
       
       if (versesMatch && tafsirMatch) {
          try {
-           const verses = JSON.parse(`[${versesMatch[1]}]`);
-           const tafsir = tafsirMatch[1];
+           const versesStr = versesMatch[1];
+           const verses = versesStr.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+           const tafsir = tafsirMatch[1].replace(/\\n/g, '\n');
            return { verses, tafsir };
-         } catch(e) {}
+         } catch(e) {
+           console.error("Manual Extraction failed", e);
+         }
       }
 
       return {
