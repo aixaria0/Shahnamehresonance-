@@ -1,0 +1,6 @@
+{
+  "name": "Resonance Shahnameh",
+  "description": "A premium Telegram Mini App for poetic storytelling and AI-driven character discovery in the world of Shahnameh.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": []
+}
