@@ -30,6 +30,6 @@
 - [x] Test the persisted onboarding completion state with a mock browser local-storage implementation.
 - [x] Run and document final automated and live-interface verification for voice playback, guided onboarding, and story covers.
 - [ ] Verify live voice playback state transitions and guided-tour completion behavior in the interface.
-- [ ] Audit recent React and Web Speech API console output, then push the verified latest code to GitHub.
-- [ ] Push the verified current application to a dedicated non-destructive branch in the connected GitHub repository.
+- [x] Audit recent React and Web Speech API console output, then push the verified latest code to GitHub.
+- [x] Push the verified current application to a dedicated non-destructive branch in the connected GitHub repository.
 - [x] Fix the React effect cleanup warning found in the browser console during final verification.
