@@ -1,0 +1,35 @@
+# Project TODO
+
+- [x] Establish a responsive RTL Persian application shell with Vazirmatn typography and a dark royal Shahnameh design system.
+- [x] Create a cinematic landing page with ornamental motifs, animated hero treatment, character showcase, story preview, and clear paths into the court.
+- [x] Model and migrate persistent court sessions, messages, user-character preferences, and saved fortunes in the database.
+- [x] Implement Manus OAuth-aware account states, a personalized profile, session history, and favorite-character management.
+- [x] Implement persona-specific, multi-turn AI court conversations for Rostam, Zal, Simorgh, and Kay Khosrow in Persian and English.
+- [x] Build the AI-powered فال flow with an intention prompt, a Shahnameh-inspired verse, interpretation, and scroll-unrolling presentation.
+- [x] Implement browser audio capture, Whisper transcription, file validation, and insertion of transcribed text into the court composer.
+- [x] Build an epic story explorer for Rostam and Sohrab, Siavash, and Zal and Rudabeh, with on-demand AI commentary.
+- [x] Add polished states for loading, errors, empty collections, authentication, keyboard navigation, and reduced motion.
+- [x] Add automated tests for server-side persona, session, favorite, fortune, and transcription validation behavior.
+- [x] Verify production build, responsive desktop/mobile rendering, and core interface interactions.
+- [x] Add dedicated query error states for the session, favorite, and story collections.
+- [x] Add automated tests for session ownership/persistence and favorite-character toggling.
+- [x] Run and verify a production application build before delivery.
+- [x] Add character-specific text-to-speech generation and playback controls for court responses.
+- [x] Add voice style mapping, playback accessibility controls, and automated validation for the TTS workflow.
+- [x] Add real-time word-level highlighting synchronized to character speech playback.
+- [x] Add accessible fallback behavior and automated validation for speech-boundary highlighting.
+- [x] Add sentence-level playback progress and automatic scroll-follow for long court responses.
+- [x] Add a user-controlled high-contrast speech-highlighting mode.
+- [x] Repair local playback-position persistence when saved court sessions are reopened.
+- [x] Add automated tests for sentence mapping and safe local persistence behavior.
+- [x] Audit and repair interface layout, visual hierarchy, and responsive control presentation across the court experience.
+- [x] Create and integrate cohesive illustrated covers for Rostam and Sohrab, Siavash, and Zal and Rudabeh.
+- [x] Add an accessible first-visit guided tour covering character choice, messages, voice controls, and reading accessibility.
+- [x] Add persistent tour completion controls and automated validation for onboarding state.
+- [x] Strengthen each in-app epic-cover illustration with story-specific manuscript motifs and verify it in the explorer.
+- [x] Test the persisted onboarding completion state with a mock browser local-storage implementation.
+- [x] Run and document final automated and live-interface verification for voice playback, guided onboarding, and story covers.
+- [ ] Verify live voice playback state transitions and guided-tour completion behavior in the interface.
+- [ ] Audit recent React and Web Speech API console output, then push the verified latest code to GitHub.
+- [ ] Push the verified current application to a dedicated non-destructive branch in the connected GitHub repository.
+- [x] Fix the React effect cleanup warning found in the browser console during final verification.

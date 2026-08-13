@@ -1,0 +1,34 @@
+/* Final layout guardrails: keep every archive surface inside the viewport in RTL and LTR contexts. */
+html, body, #root { max-width: 100%; overflow-x: hidden; }
+.profile-page { width: 100%; max-width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: hidden; direction: ltr; contain: inline-size; }
+.profile-header,
+.profile-wrap { width: min(1080px, calc(100vw - 48px)); max-width: calc(100vw - 48px); min-width: 0; box-sizing: border-box; flex: 0 0 auto; margin-inline: 0 !important; left: auto; right: auto; transform: none; direction: rtl; }
+.profile-wrap { margin-block: 42px 96px !important; }
+.profile-header { isolation: isolate; }
+.profile-hero,
+.profile-grid,
+.profile-card,
+.profile-copy { min-width: 0; }
+.profile-grid { width: 100%; max-width: 100%; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }
+.profile-hero { grid-template-columns: 76px minmax(0, 1fr) max-content; gap: 22px; padding: 30px 32px; border-radius: 14px 3px 14px 3px; background: radial-gradient(circle at 10% 25%, rgba(221, 158, 55, .14), transparent 20%), linear-gradient(110deg, rgba(45, 20, 50, .9), rgba(15, 23, 55, .88)); }
+.profile-copy h1 { overflow-wrap: anywhere; letter-spacing: 0; }
+.profile-copy p { max-width: 560px; line-height: 1.95; }
+.profile-verse { display: inline-flex; align-items: center; gap: 8px; }.profile-verse::before,.profile-verse::after { content: ""; width: 17px; height: 1px; background: currentColor; opacity: .5; }
+.profile-card { position: relative; overflow: hidden; border-radius: 11px; }.profile-card::after { content: "✦"; position: absolute; left: 15px; bottom: 11px; color: rgba(238, 193, 95, .2); font-size: 13px; pointer-events: none; }
+.profile-card-heading { position: relative; z-index: 1; }.profile-empty { position: relative; z-index: 1; border: 1px dashed rgba(225, 181, 85, .13); margin-top: 14px; min-height: 170px; background: radial-gradient(circle at 50% 42%, rgba(220, 169, 69, .055), transparent 46%); }
+.profile-session { transition: background .16s ease-out, padding .16s ease-out; }.profile-session:hover { padding-inline: 9px; background: rgba(226, 174, 72, .075); }
+.court-layout { border-radius: 16px 4px 16px 4px; overflow: hidden; }
+.court-aside { background: linear-gradient(180deg, rgba(8, 9, 29, .73), rgba(18, 13, 34, .48)); }
+.console-header { background: linear-gradient(90deg, rgba(63, 34, 55, .12), transparent 62%); }
+.console-actions { flex-wrap: wrap; justify-content: flex-end; }
+.contrast-toggle { min-height: 31px; }
+.story-card { border-radius: 12px 2px 12px 2px; }.story-card::after { content: ""; position: absolute; right: 0; bottom: 0; width: 38%; height: 1px; background: linear-gradient(90deg, transparent, rgba(236, 189, 88, .58)); }
+.story-card h3 { position: relative; z-index: 1; }
+
+@media (max-width: 860px) {
+  .profile-hero { grid-template-columns: 70px minmax(0, 1fr); padding: 24px; }.profile-new-chat { grid-column: 1 / -1; width: 100%; }.profile-grid { gap: 14px; }
+}
+
+@media (max-width: 540px) {
+  .profile-header,.profile-wrap { width: calc(100% - 28px); }.profile-header { grid-template-columns: 1fr auto; }.profile-titlemark { display: none; }.profile-hero { grid-template-columns: 60px minmax(0, 1fr); gap: 14px; padding: 19px; }.profile-monogram { width: 60px; height: 60px; font-size: 29px; }.profile-copy h1 { font-size: 28px; }.profile-copy p { font-size: 11px; }.profile-verse { font-size: 12px; }.court-layout { border-radius: 11px 2px 11px 2px; }.console-actions { gap: 3px; }.favorite-button,.contrast-toggle { min-height: 30px; }.story-card { min-height: 310px; }
+}
